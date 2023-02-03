@@ -33,6 +33,26 @@ g++ -o main main.o
 
 `argv` 是 argument vector 的缩写，表示传入 `main` 函数的参数序列或指针，并且第一个参数 `argv[0]` 一定是程序的名称，并且包含了程序所在的完整路径
 
+### makefile 文件
+
+```
+main: main.o tree.o
+g++ -o main main.o tree.o -Wall
+
+main.o: main.cpp
+g++ -c main.cpp -Wall
+
+tree.o: tree.cpp tree.h 
+g++ -c tree.cpp -Wall
+
+clean:
+rm -rf *.o main
+```
+
+优先写最后的可执行文件，然后依次写依赖文件，最后写 `clean`
+
+在终端通过 `make` 指令运行 `makefile` 文件
+
 ## Object
 
 **Access to attributes and methods calls**
@@ -40,6 +60,26 @@ g++ -o main main.o
 `.` from one object
 
 `->` from a pointer to one object
+
+**`.h` 文件的创建**
+
+Including file class declaration (.h): `#include`
+
+Preventing one class declaration from multiple inclusion: `#define`, `#ifndef`, `#endif`, ...
+
+### C++ files organization
+
+Header files (« .h ») :
+
+* Declaration : types, constants, functions, classes (attributes and signature methods)
+* Files to be included when the declared entities are needed
+
+Implementation files (« .cpp ») :
+
+* Definition : global variables, functions contents, class methods code
+* Files to be compiled to produce intermediate binaries and finally the binary executable
+
+### 类的创建与删除
 
 Stack 上的内存会有系统自动分配和回收，Heap 上的内存需要手动分配和回收，否则会发生内存泄漏（memory leak）
 
@@ -60,3 +100,5 @@ int main (int argc , char* argv[]) {
 ```
 
 The compiler is only responsible for the lifetime of the variables you declare i.e. `Tree a1` and pointer to `Tree a2` (not the tree itself), according to their scopes.
+
+<img src="https://github.com/CALEB-jiale/CppNote/blob/main/03_02/类的创建与删除.png?raw=true" alt="类的创建与删除" style="zoom:30%;" />
