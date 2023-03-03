@@ -192,7 +192,152 @@ Cast 的方法有四种：
 
 ## 02_10
 
-### Memory Management
+### Copy constructor
+
+Shallow copy mechanism 只会复制原 Object 中的一切数据，如果原 Object 中有指针，则两个 Object 的指针指向同一片内存。如果想要把指针内容也复制，就需要实现 deep copy mechanism
 
 
+
+### Affectation operator
+
+The equal operator behaves like the default copy mechanism. To solve this issue, we need to overload the default “=” operator.
+
+### rvalue 与 lvalue
+
+
+
+## 02_17
+
+### Questions
+
+1. 为什么重写诗不需要指明类型的不同
+2. 为什么不要总是通类的
+
+### Templates
+
+#### Templates functions
+
+**Goal** : Do not write similar C++ code several times, when only the entity types change
+
+**Keywords**
+
+1. **template** : indicates the compiler how to create functions having the same code but operating on generic object types
+2. **typename** : gives a « name » to the generic type
+
+```c++
+template <typename T>
+T min (T a , T b) {
+  return a > b ? b : a ;
+}
+```
+
+当执行一下代码：
+
+```c++
+double c = min(10.4, 23.5); 
+int d = min(10, 23);
+```
+
+- two functions « min » are written down by the compiler
+
+  ```c++
+  double min_double (double, double); 
+  int min_int (int, int);
+  ```
+
+- each `min` function deals with one specific type: double then int
+
+- all checking performed when compiling, **not at runtime**
+
+执行以下代码将会出现编译错误：
+
+```c++
+double c = min (10.4, 23);
+```
+
+Solution: tell the compiler to produce and use a specific templated function
+
+```c++
+deol’uInbfolrmeatiocn = min<double> (10.4, 23);
+```
+
+**Explicit template specialization** (partial or full) : OK
+
+```c++
+template <>
+string min (string a , string b) {
+  return a.length() > b.length() ? b : a ; }
+```
+
+The compiler selects the *most specific version*
+
+```c++
+min (5 , 10) ;
+min (4.5 , 8.75) ;
+min ("tomate" , "chou")
+```
+
+The compiler deals with overloading first, then selects the most specific template version
+
+#### Templates classes
+
+**Goal** : Avoid useless redundancies while authorizing specialization for **class** definition
+
+```c++
+template <typename T , int N = 2>
+class Point {
+  T v[N];
+}
+
+Point<double,3> P; 
+Point<int,2> I;
+```
+
+```c++
+void print () { }
+template <typename T, typename... Types>
+void print (const T& firstArg , const Types&... args) {
+  cout << firstArg << endl ;
+  print(args...);
+}
+```
+
+### STL
+
+#### Container
+
+#### Algorithm
+
+#### Iterator
+
+```c++
+Container<Shape> C ;
+for (Container<Shape>::iterator it = C.begin() ; it != C.end() ; ++it) {
+  std::cout << *it << std::endl ;
+}
+```
+
+## 02_24
+
+### Smart Pointers
+
+### 简要解释
+
+在 C++ 中，指针是一种非常有用但也很容易出错的语言特性。在程序中使用指针时，需要手动管理内存的分配和释放，这很容易导致内存泄漏和悬空指针等问题。为了避免这些问题，C++11 引入了智能指针（smart pointer）。
+
+智能指针是一种封装了原始指针的类，它能够自动管理内存分配和释放。使用智能指针时，可以避免手动调用 `new` 和 `delete` 等操作，从而减少出错的机会。智能指针通过使用引用计数来跟踪指向一个对象的所有指针，当引用计数变为零时，智能指针会自动释放对象的内存。
+
+C++11 中有三种类型的智能指针：
+
+1. `unique_ptr`：只能有一个指针指向它所管理的对象，因此不能进行复制或赋值操作，但可以通过移动语义进行转移拥有权。
+2. `shared_ptr`：可以有多个指针共享它所管理的对象，使用引用计数来管理内存，当引用计数为零时释放内存。
+3. `weak_ptr`：是一种特殊的 `shared_ptr`，它不会增加引用计数，因此不会阻止对象的释放，但可以用来检查对象是否已经被释放。
+
+使用智能指针可以有效地避免内存管理问题，但需要注意的是，智能指针也并非完美无缺，它们可能会引入循环引用的问题，导致内存泄漏。因此，在使用智能指针时，需要仔细考虑其生命周期和所有权的管理，以确保程序的正确性和效率。
+
+**La durée de vie des objets créés dynamiquement**
+
+Création : **explicite** ► allocation de mémoire sur le tas (via `new`)
+
+Destruction : doit aussi être **explicite** (lorsque la référence sur l'objet sort de la portée) ► libération explicite de la mémoire (via `delete`)
 
